@@ -1,0 +1,14 @@
+
+services:
+  web2:
+    image: nginx
+    volumes:
+      - ./logs/nginx.log:/var/log/nginx/access.log
+    command: [nginx-debug, '-g', 'daemon off;']
+    networks:
+      - network1
+
+networks:
+  network1:
+    name: my-network
+    external: true

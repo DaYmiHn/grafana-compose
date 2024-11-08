@@ -1,0 +1,43 @@
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - /var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+        - network1
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./promtail.yml:/etc/promtail/config.yml
+      - ./logs/nginx.log:/var/log/nginx/access.log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - network1
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - network1
+
+  web:
+    image: nginx
+    command: [nginx-debug, '-g', 'daemon off;']
+    networks:
+      - network1
+    volumes:
+      - ./logs/nginx.log:/var/log/nginx/access.log
+
+networks:
+  network1:
+    name: my-network
+    external: true
+
+
+
